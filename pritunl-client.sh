@@ -464,6 +464,8 @@ establish_vpn_connection() {
   profile_server_array=()
   connections_status='[]'
 
+  echo "Establishing connection..."
+
   # Loop until the current step reaches the total number of steps
   while [[ "$current_time" -le "$end_time" ]]; do
 
@@ -485,7 +487,7 @@ establish_vpn_connection() {
 
     # Print the connection check progress using the progress bar function
     # display_progress "$elapsed_count" "$timeout_seconds" "Establishing connection"
-    echo "Establishing connection..."
+    echo "."
 
     for profile_server_item in "${profile_server_array[@]}"; do
       profile_name="$(echo "$profile_server_item" | jq -r ".name")"
