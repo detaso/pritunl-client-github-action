@@ -542,7 +542,8 @@ establish_vpn_connection() {
     connections_expected="$(echo $profile_server_json | jq ". | length")"
 
     if [[ "$connections_connected" -eq "$connections_expected" ]]; then
-      echo -e "${TTY_EMOJI_LINK}  The ${TTY_GREEN_BOLD}profile${TTY_COLOR_RESET} has been successfully set up, with designated ${TTY_GREEN_BOLD}profile $(pluralize_word $connections_expected "server")${TTY_COLOR_RESET}, and a ${TTY_GREEN_BOLD}secure connection${TTY_COLOR_RESET} established."
+      # echo -e "${TTY_EMOJI_LINK}  The ${TTY_GREEN_BOLD}profile${TTY_COLOR_RESET} has been successfully set up, with designated ${TTY_GREEN_BOLD}profile $(pluralize_word $connections_expected "server")${TTY_COLOR_RESET}, and a ${TTY_GREEN_BOLD}secure connection${TTY_COLOR_RESET} established."
+      echo -e "The profile has been successfully set up, with designated profile $(pluralize_word "$connections_expected" "server"), and a secure connection established."
       break
     fi
 
