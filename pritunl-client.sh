@@ -465,7 +465,6 @@ establish_vpn_connection() {
   connections_status='[]'
 
   # Loop until the current step reaches the total number of steps
-  set -x
   while [[ "$current_time" -le "$end_time" ]]; do
 
     profile_server_json=$(fetch_profile_server)
@@ -533,8 +532,6 @@ establish_vpn_connection() {
     # Update once again the current time
     current_time=$(date +%s)
   done
-
-  set +x
 
   # Print the timeout message and exit error if needed
   if [[ "$current_time" -gt "$end_time" ]]; then
