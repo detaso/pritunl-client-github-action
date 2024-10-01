@@ -358,7 +358,7 @@ setup_profile_file() {
 
         # Display All Client IDs and Names (JSON array) with blue color
         # client-ids is displayed in blue, followed by the JSON array of IDs and names
-        echo -e "client-ids: $(echo $client_ids | jq -cC)"
+        echo -e "client-ids: $(echo $client_ids | jq -c)"
 
         # Display horizontal rule, separating header from content
         echo -e "-------------------"
