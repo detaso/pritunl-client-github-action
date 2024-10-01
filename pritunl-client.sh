@@ -33,25 +33,6 @@ PRITUNL_ESTABLISHED_CONNECTION_TIMEOUT="${PRITUNL_ESTABLISHED_CONNECTION_TIMEOUT
 PRITUNL_CONCEALED_OUTPUTS="${PRITUNL_CONCEALED_OUTPUTS:-}"                           # Concealed Outputs
 # ---------------------------------------------------------------
 
-# Visual Feedback with Emoji Bytes and Color Codes
-# ---------------------------------------------------------------
-TTY_EMOJI_PACKAGE='\xF0\x9F\x93\xA6' # Package emoji
-TTY_EMOJI_SCROLL='\xF0\x9F\x93\x9C'  # Scroll emoji
-TTY_EMOJI_EYE='\xF0\x9F\x91\x80'     # Eye emoji
-TTY_EMOJI_LINK='\xF0\x9F\x94\x97'    # Link emoji
-TTY_RED_NORMAL='\033[0;31m'          # Normal red color
-TTY_RED_BOLD='\033[1;31m'            # Bold red color
-TTY_GREEN_NORMAL='\033[0;32m'        # Normal green color
-TTY_GREEN_BOLD='\033[1;32m'          # Bold green color
-TTY_YELLOW_NORMAL='\033[0;33m'       # Normal yellow color
-TTY_YELLOW_BOLD='\033[1;33m'         # Bold yellow color
-TTY_BLUE_NORMAL='\033[0;34m'         # Normal blue color
-TTY_BLUE_BOLD='\033[1;34m'           # Bold blue color
-TTY_GRAY_NORMAL='\033[0;37m'         # Normal gray color
-TTY_GRAY_BOLD='\033[1;90m'           # Bold gray color
-TTY_COLOR_RESET='\033[0m'            # Reset terminal color
-# ---------------------------------------------------------------
-
 # Installation process for Linux
 install_for_linux() {
   # This function contains code to install the Pritunl client on Linux.
@@ -245,7 +226,7 @@ link_executable_to_bin() {
     ln -s "$executable_file" "$bin_directory"
   else
     # Print an error message if the executable file is not found
-    echo -e "${TTY_RED_NORMAL}Installation of the executable \"$executable_file\" failed.${TTY_COLOR_RESET}" && exit 1
+    echo -e "Installation of the executable \"$executable_file\" failed." && exit 1
   fi
 }
 
@@ -318,7 +299,7 @@ setup_profile_file() {
 
   # Check if the base64 data is valid
   if ! [[ $(base64 -d <<<"$profile_base64" 2>/dev/null | tr -d '\0') ]]; then
-    echo -e "${TTY_RED_NORMAL}Base64 data is not valid.${TTY_COLOR_RESET}" && exit 1
+    echo -e "Base64 data is not valid." && exit 1
   fi
 
   # If the base64 data is valid, decode it and store it to temporary file.
@@ -327,12 +308,12 @@ setup_profile_file() {
   if [[ -e "$profile_file" ]]; then
     # Check if the file is a valid tar archive
     if ! file "$profile_file" | grep -q 'tar archive'; then
-      echo -e "${TTY_RED_NORMAL}The file is not a valid tar archive.${TTY_COLOR_RESET}" && exit 1
+      echo -e "The file is not a valid tar archive." && exit 1
     fi
   fi
 
   if ! pritunl-client add "$profile_file"; then
-    echo -e "${TTY_RED_NORMAL}It appears that the profile file cannot be loaded.${TTY_COLOR_RESET}" && exit 1
+    echo -e "It appears that the profile file cannot be loaded." && exit 1
   else
     rm -f "$profile_file"
   fi
@@ -363,26 +344,26 @@ setup_profile_file() {
       fi
 
       # Display the profile setup output with a scroll emoji and colored text
-      echo -e "${TTY_EMOJI_SCROLL}  The profile has been configured, ${TTY_BLUE_NORMAL}step outputs${TTY_COLOR_RESET} generated, and profile $(pluralize_word $profile_server_count "server") are now ready for connection establishment."
+      echo -e "The profile has been configured, step outputs generated, and profile $(pluralize_word "$profile_server_count" "server") are now ready for connection establishment."
 
       if [[ "${PRITUNL_CONCEALED_OUTPUTS}" != "true" ]]; then
-        # Display header with yellow color
-        echo -e "${TTY_YELLOW_NORMAL}Action Step Outputs${TTY_COLOR_RESET}"
-        # Display horizontal rule with gray color, separating header from content
-        echo -e "${TTY_GRAY_NORMAL}-------------------${TTY_COLOR_RESET}"
+        # Display header
+        echo -e "Action Step Outputs"
+        # Display horizontal rule, separating header from content
+        echo -e "-------------------"
 
         # Display Primary Client ID (string, bash variable) with blue and green colors
         # client-id is displayed in blue, followed by the actual ID in green
-        echo -e "${TTY_BLUE_NORMAL}client-id${TTY_COLOR_RESET}: ${TTY_GREEN_NORMAL}$client_id${TTY_COLOR_RESET}"
+        echo -e "client-id: $client_id"
 
         # Display All Client IDs and Names (JSON array) with blue color
         # client-ids is displayed in blue, followed by the JSON array of IDs and names
-        echo -e "${TTY_BLUE_NORMAL}client-ids${TTY_COLOR_RESET}: $(echo $client_ids | jq -cC)"
+        echo -e "client-ids: $(echo $client_ids | jq -cC)"
 
-        # Display horizontal rule with gray color, separating content from footer
-        echo -e "${TTY_GRAY_NORMAL}-------------------${TTY_COLOR_RESET}"
+        # Display horizontal rule, separating header from content
+        echo -e "-------------------"
       else
-        echo -e "${TTY_EMOJI_EYE}  Step outputs are concealed. Set ${TTY_YELLOW_NORMAL}concealed-outputs${TTY_COLOR_RESET} to ${TTY_YELLOW_NORMAL}false${TTY_COLOR_RESET} in the action inputs to reveal."
+        echo -e "Step outputs are concealed. Set concealed-outputs to false in the action inputs to reveal."
       fi
 
       # Break the loop
@@ -405,7 +386,7 @@ setup_profile_file() {
 
       # Print the timeout message and exit error if needed
       if [[ "$current_time" -ge "$end_time" ]]; then
-        echo -e "${TTY_RED_NORMAL}No server entries found for a profile.${TTY_COLOR_RESET}" && exit 1
+        echo -e "No server entries found for a profile." && exit 1
       fi
     fi
   done
@@ -532,7 +513,6 @@ establish_vpn_connection() {
             echo "$connections_status" |
               jq --arg profile_id "$profile_id" '. + [{"id": $profile_id}]'
           )
-          # echo -e "The connection for profile ${TTY_GREEN_NORMAL}\"${profile_name}\"${TTY_COLOR_RESET} has been fully established."
           echo -e "The connection for profile \"${profile_name}\" has been fully established."
         fi
 
@@ -543,7 +523,6 @@ establish_vpn_connection() {
     connections_expected="$(echo $profile_server_json | jq ". | length")"
 
     if [[ "$connections_connected" -eq "$connections_expected" ]]; then
-      # echo -e "${TTY_EMOJI_LINK}  The ${TTY_GREEN_BOLD}profile${TTY_COLOR_RESET} has been successfully set up, with designated ${TTY_GREEN_BOLD}profile $(pluralize_word $connections_expected "server")${TTY_COLOR_RESET}, and a ${TTY_GREEN_BOLD}secure connection${TTY_COLOR_RESET} established."
       echo -e "The profile has been successfully set up, with designated profile $(pluralize_word "$connections_expected" "server"), and a secure connection established."
       break
     fi
@@ -561,11 +540,9 @@ establish_vpn_connection() {
   if [[ "$current_time" -gt "$end_time" ]]; then
     echo "Timeout reached!"
     if [[ "$connections_connected" -gt 0 ]] && [[ "$connections_connected" -lt "$connections_expected" ]]; then
-      # echo -e "${TTY_YELLOW_BOLD}We could not establish a connection to other servers, but we will go ahead and proceed anyway.${TTY_COLOR_RESET}"
       echo -e "We could not establish a connection to other servers, but we will go ahead and proceed anyway."
       break
     else
-      # echo -e "${TTY_RED_BOLD}We could not connect to the profile $(pluralize_word $connections_expected "server") specified in the profile. The process has been terminated.${TTY_COLOR_RESET}" && exit 1
       echo -e "We could not connect to the profile $(pluralize_word "$connections_expected" "server") specified in the profile. The process has been terminated." && exit 1
     fi
   fi
@@ -678,14 +655,14 @@ display_progress() {
   echo -n -e "$message: ["
   # Print completed characters (yellow)
   for ((i = 0; i < completed; i++)); do
-    echo -n -e "${TTY_YELLOW_NORMAL}#${TTY_COLOR_RESET}"
+    echo -n -e "#"
   done
   # Print remaining characters (green)
   for ((i = 0; i < remaining; i++)); do
-    echo -n -e "${TTY_GREEN_NORMAL}-${TTY_COLOR_RESET}"
+    echo -n -e "-"
   done
   # Print elapsed and total time
-  echo -n -e "] ${TTY_YELLOW_NORMAL}${current_step}s${TTY_COLOR_RESET} elapsed (out of ${TTY_GREEN_NORMAL}${total_steps}s${TTY_COLOR_RESET} allowed)."
+  echo -n -e "] ${current_step}s elapsed (out of ${total_steps}s allowed)."
 
   # Print new line
   echo -n -e "\n"
@@ -711,7 +688,7 @@ normalize_vpn_mode() {
     ;;
   *)
     # Print error message if invalid VPN mode and exit
-    echo -e "${TTY_RED_NORMAL}Invalid VPN mode for \"${PRITUNL_VPN_MODE}\".${TTY_COLOR_RESET}" && exit 1
+    echo -e "Invalid VPN mode for \"${PRITUNL_VPN_MODE}\"." && exit 1
     ;;
   esac
 }
@@ -736,13 +713,13 @@ validate_client_version() {
   # Validate Client Version Pattern
   # Check if the version matches the pattern of digits and dots (e.g., 1.2.3.4)
   if ! [[ "$version" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
-    echo -e "${TTY_RED_NORMAL}Invalid version pattern for \"$version\".${TTY_COLOR_RESET}" && exit 1
+    echo -e "Invalid version pattern for \"$version\"." && exit 1
   fi
 
   # Check if the version exists in the source
   # Use curl to fetch the raw file and pipe it to grep
   if ! [[ $(curl -sSL $version_file | grep -c "$version") -ge 1 ]]; then
-    echo -e "${TTY_RED_NORMAL}Version \"$version\" does not exist in the \"$pritunl_client_repo\" source.${TTY_COLOR_RESET}" && exit 1
+    echo -e "Version \"$version\" does not exist in the \"$pritunl_client_repo\" source." && exit 1
   fi
 }
 
@@ -750,27 +727,7 @@ validate_client_version() {
 display_installed_client() {
   # Print the Pritunl client version with colorful output
   # Using awk to format the output
-  pritunl-client version |
-    awk 'BEGIN {
-      # Define Emoji Unicode and Color Codes
-      emoji="'${TTY_EMOJI_PACKAGE}'"  # Emoji for visual feedback
-      blue="'${TTY_BLUE_BOLD}'"  # Blue color for version text
-      green="'${TTY_GREEN_BOLD}'"  # Green color for version status
-      reset="'${TTY_COLOR_RESET}'"  # Reset terminal color
-    }
-    # Format the output with Emoji Unicode and Colors
-    {
-      # Print the App Name and Version Information with Emoji Unicode and Colors
-      printf "%s  %s%s %s%s %s%s%s\n", # Rendering Format
-        emoji, # TTY Emoji
-        blue, # TTY Color Blue
-        $1, # App Name First Word
-        $2, # App Name Second Word
-        reset, # TTY Color Reset
-        green, # TTY Green Color
-        $3, # App Version Number
-        reset # TTY Color Reset
-    }'
+  pritunl-client version
 }
 
 # Define a function to pluralize a word based on a given count
@@ -834,6 +791,6 @@ Linux | macOS | Windows)
   ;;
 *)
   # If the operating system is not supported, print an error message and exit
-  echo -e "${TTY_RED_BOLD}Unsupported OS: ${RUNNER_OS}.${TTY_COLOR_RESET}" && exit 1
+  echo -e "Unsupported OS: ${RUNNER_OS}." && exit 1
   ;;
 esac
