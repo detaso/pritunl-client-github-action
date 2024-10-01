@@ -532,7 +532,8 @@ establish_vpn_connection() {
             echo "$connections_status" |
               jq --arg profile_id "$profile_id" '. + [{"id": $profile_id}]'
           )
-          echo -e "The connection for profile ${TTY_GREEN_NORMAL}\"${profile_name}\"${TTY_COLOR_RESET} has been fully established."
+          # echo -e "The connection for profile ${TTY_GREEN_NORMAL}\"${profile_name}\"${TTY_COLOR_RESET} has been fully established."
+          echo -e "The connection for profile \"${profile_name}\" has been fully established."
         fi
 
       fi
@@ -560,10 +561,12 @@ establish_vpn_connection() {
   if [[ "$current_time" -gt "$end_time" ]]; then
     echo "Timeout reached!"
     if [[ "$connections_connected" -gt 0 ]] && [[ "$connections_connected" -lt "$connections_expected" ]]; then
-      echo -e "${TTY_YELLOW_BOLD}We could not establish a connection to other servers, but we will go ahead and proceed anyway.${TTY_COLOR_RESET}"
+      # echo -e "${TTY_YELLOW_BOLD}We could not establish a connection to other servers, but we will go ahead and proceed anyway.${TTY_COLOR_RESET}"
+      echo -e "We could not establish a connection to other servers, but we will go ahead and proceed anyway."
       break
     else
-      echo -e "${TTY_RED_BOLD}We could not connect to the profile $(pluralize_word $connections_expected "server") specified in the profile. The process has been terminated.${TTY_COLOR_RESET}" && exit 1
+      # echo -e "${TTY_RED_BOLD}We could not connect to the profile $(pluralize_word $connections_expected "server") specified in the profile. The process has been terminated.${TTY_COLOR_RESET}" && exit 1
+      echo -e "We could not connect to the profile $(pluralize_word "$connections_expected" "server") specified in the profile. The process has been terminated." && exit 1
     fi
   fi
 }
