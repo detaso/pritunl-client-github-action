@@ -376,7 +376,7 @@ setup_profile_file() {
       elapsed_count=$([[ "$progression_count" -lt 1 ]] && echo 0 || echo $progression_count)
 
       # Print the attempt progress using the progress bar function
-      display_progress "$elapsed_count" "$timeout_seconds" "Ready profile"
+      # display_progress "$elapsed_count" "$timeout_seconds" "Ready profile"
 
       # Sleep for a moment (simulating work)
       sleep 1
@@ -483,7 +483,7 @@ establish_vpn_connection() {
     progression_count=$((current_time - start_time))
 
     # Present the time consumed as lapsed count
-    elapsed_count=$([[ "$progression_count" -lt 1 ]] && echo 0 || echo $progression_count)
+    # elapsed_count=$([[ "$progression_count" -lt 1 ]] && echo 0 || echo $progression_count)
 
     # Print the connection check progress using the progress bar function
     # display_progress "$elapsed_count" "$timeout_seconds" "Establishing connection"
@@ -540,7 +540,6 @@ establish_vpn_connection() {
     echo "Timeout reached!"
     if [[ "$connections_connected" -gt 0 ]] && [[ "$connections_connected" -lt "$connections_expected" ]]; then
       echo -e "We could not establish a connection to other servers, but we will go ahead and proceed anyway."
-      break
     else
       echo -e "We could not connect to the profile $(pluralize_word "$connections_expected" "server") specified in the profile. The process has been terminated." && exit 1
     fi
