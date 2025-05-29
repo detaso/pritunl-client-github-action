@@ -545,8 +545,8 @@ establish_vpn_connection() {
     fi
   fi
 
-  client_ip=$(pritunl-client list --json | jq -r '.[0].client_address | split("/") | first')
-  pritunl-client logs "${client_ip}"
+  client_id=$(pritunl-client list --json | jq -r '.[0].id')
+  pritunl-client logs "${client_id}"
 }
 
 # Get the Profile Server
