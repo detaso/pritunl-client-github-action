@@ -63,7 +63,7 @@ install_for_linux() {
     # Export the GPG key and add it to the trusted keyring
     gpg --armor --export ${PRITUNL_LINUX_RUNNER_GPG_KEY} | sudo tee /etc/apt/trusted.gpg.d/pritunl.asc >/dev/null
     # Update the package list and install Pritunl client
-    sudo apt-get update -qq -y && sudo apt-get install -qq -o=Dpkg::Use-Pty=0 -y pritunl-client
+    sudo apt-get update -qq -y && sudo apt-get install -qq -o=Dpkg::Use-Pty=0 -y pritunl-client-electron
 
   else
     # Installing Version Specific using Debian Package from Pritunl GitHub Releases
