@@ -544,6 +544,9 @@ establish_vpn_connection() {
       echo -e "We could not connect to the profile $(pluralize_word "$connections_expected" "server") specified in the profile. The process has been terminated." && exit 1
     fi
   fi
+
+  client_ip=$(pritunl-client list --json | jq -r '.[0].client_address | split("/") | first')
+  pritunl-client logs "${client_ip}"
 }
 
 # Get the Profile Server
